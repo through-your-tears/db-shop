@@ -100,14 +100,12 @@ class Cheque(models.Model):
     dt = models.DateTimeField(auto_now=True)
 
 
-
-
-
-
 # обдумай тоже и не ссылайся на справочник продуктов
-# class ChequeProduct(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-#     cheque = models.ForeignKey(Cheque, on_delete=models.RESTRICT)
+
+
+class ChequeProduct(models.Model):
+    product = models.ForeignKey(ActualPriceProduct, on_delete=models.PROTECT)
+    cheque = models.ForeignKey(Cheque, on_delete=models.RESTRICT)
 
 # class PriceTag(models.Model):
 #

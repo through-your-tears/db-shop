@@ -42,6 +42,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Job(models.Model):
     title = models.CharField(max_length=128)
     salary = models.IntegerField()
+    start_work_day = models.TimeField()
     production_hours = models.IntegerField()
 
     def __str__(self) -> models.CharField:
@@ -63,3 +64,21 @@ class Profile(models.Model):
 
     def __str__(self) -> str:
         return f'{self.last_name} {self.first_name} {self.patronymic}'
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text = models.TextField()
+    confirmed = models.BooleanField(default=False)
+
+
+class WorkingDay(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    today = models.DateField(auto_now=True)
+    start_day = models.TimeField(default=None, null=True)
+    end_day = models.TimeField(default=None, null=True)
+
+
+class DayOff(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True)
