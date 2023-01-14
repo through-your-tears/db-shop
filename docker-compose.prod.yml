@@ -1,0 +1,72 @@
+version: '3.3'
+
+services:
+  web:
+    build:
+      context: ./dbShop
+      dockerfile: Dockerfile.prod
+    command: gunicorn dbShop.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+    expose:
+      - 8000
+    depends_on:
+      - db
+  db:
+    image: postgres:11.14-bullseye
+    environment:
+      - POSTGRES_USER=my_user
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=db
+    ports:
+      - 5432:5432
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+    ports:
+      - 80:80
+    depends_on:
+      - web
+  redis:
+    image: redis:5-alpine
+  celery:
+    build:
+      context: ./dbShop
+      dockerfile: Dockerfile.prod
+    command: celery -A dbShop worker -P eventlet
+    volumes:
+      - ./dbShop:/usr/src/app
+    depends_on:
+      - web
+      - redis
+  beat:
+    build:
+      context: ./dbShop
+      dockerfile: Dockerfile.prod
+    command: celery -A dbShop beat -l info
+    volumes:
+    - ./dbShop:/usr/src/app
+    depends_on:
+      - web
+      - redis
+      - celery
+  dashboard:
+    build:
+      context: ./dbShop
+      dockerfile: Dockerfile.prod
+    command: celery -A dbShop flower
+    ports:
+      - 5555:5555
+    depends_on:
+      - web
+      - redis
+      - celery
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  dbShop:

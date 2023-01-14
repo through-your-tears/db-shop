@@ -6,11 +6,11 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from .models import CustomUser, Job, Profile
-from .serializers import RegistrationSerializer, LoginSerializer, CustomUserSerializer, JobSerializer, ProfileSerializer
-from .permissions import IsAuthorOrReadOnly
+from .serializers import *
+from .permissions import IsAuthorOrReadOnly, IsDirector
 from .renderers import CustomUserJSONRenderer
 from .token_generators import generate_rt, generate_jwt
 
@@ -153,4 +153,32 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
     serializer_class = ProfileSerializer
+    pagination_class = LimitOffsetPagination
+
+
+class NotificationViewSet(GenericViewSet):
+    queryset = Notification.objects.all()
+    permission_classes = (IsDirector,)
+    serializer_class = NotificationSerializer
+    pagination_class = LimitOffsetPagination
+
+
+class WorkDayViewSet(ModelViewSet):
+    queryset = WorkingDay.objects.all()
+    permission_classes = (IsDirector,)
+    serializer_class = WorkingDaySerializer
+    pagination_class = LimitOffsetPagination
+
+
+class DayOffViewSet(ModelViewSet):
+    queryset = DayOff.objects.all()
+    permission_classes = (IsDirector,)
+    serializer_class = DayOffSerializer
+    pagination_class = LimitOffsetPagination
+
+
+class VacationViewSet(ModelViewSet):
+    queryset = Vacation.objects.all()
+    permission_classes = (IsAuthorOrReadOnly,)
+    serializer_class = VacationSerializer
     pagination_class = LimitOffsetPagination

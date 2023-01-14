@@ -45,3 +45,9 @@ class IsDirector(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.user.role == Role.objects.get('director')
+
+
+class IsGK(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return request.user.role == Role.objects.get('GK')

@@ -1,8 +1,3 @@
-from django.db import models
-
-# Create your models here.
-
-
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -43,6 +38,7 @@ class Job(models.Model):
     title = models.CharField(max_length=128)
     salary = models.IntegerField()
     start_work_day = models.TimeField()
+    day_work_hours = models.IntegerField()
     production_hours = models.IntegerField()
 
     def __str__(self) -> models.CharField:
@@ -55,7 +51,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=32)
     patronymic = models.CharField(max_length=32, null=True, blank=True)
     birth_date = models.DateField()
-    job = models.ForeignKey(Job, on_delete=models.SET_NULL)
+    job = models.ForeignKey(Job, on_delete=models.PROTECT)
     passport = models.CharField(max_length=10)
     registration = models.TextField()
     department_id = models.IntegerField()
@@ -82,3 +78,9 @@ class WorkingDay(models.Model):
 class DayOff(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
+
+
+class Vacation(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    start = models.DateField()
+    end = models.DateField()

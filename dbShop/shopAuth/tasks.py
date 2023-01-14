@@ -56,5 +56,5 @@ def close_work_day():
         if notify:
             notify.confirmed = True
             notify.save(update_fields=['confirmed'])
-        day.end_day = day.user.job.start_work_day + timedelta(hours=day.user.job.production_hours)
+        day.end_day = day.user.job.start_work_day + timedelta(hours=day.user.job.day_work_hours)
         day.save(update_fields=['end_day'])

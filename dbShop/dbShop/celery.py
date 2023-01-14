@@ -23,7 +23,7 @@ app.conf.beat_schedule = {
     },
     'notify-about-end-working-day': {
         'task': 'notify_about_end_work_day',
-        'schedule': crontab(minute=0, hour=0)  # додумать
+        'schedule': crontab(minute=0, hour=0)
     },
     'close_work_day': {
         'task': 'shopAuth.tasks.add_day_off',

@@ -1,4 +1,6 @@
+import os
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 from . import models
 
 
@@ -18,7 +20,7 @@ class VendorSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    vendor = serializers.PrimaryKeyRelatedField()
+    vendor = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.Product
@@ -26,7 +28,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class VendorContactSerializer(serializers.ModelSerializer):
-    vendor = serializers.PrimaryKeyRelatedField()
+    vendor = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.VendorContact
@@ -40,18 +42,17 @@ class RegionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# обдумать
-# class TruckSerializer(serializers.ModelSerializer):
-#     region = serializers.PrimaryKeyRelatedField()
-#     driver = serializers.StringRelatedField()
-#
-#     class Meta:
-#         model = models.Truck
-#         fields = '__all__'
+class TruckSerializer(serializers.ModelSerializer):
+    region = serializers.PrimaryKeyRelatedField(read_only=True)
+    driver = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.Truck
+        fields = '__all__'
 
 
-class ListInventoryProductSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+class InventoryProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
 
     class Meta:
         model = models.InventoryProduct
@@ -59,21 +60,60 @@ class ListInventoryProductSerializer(serializers.ModelSerializer):
 
 
 class InventorySerializer(serializers.ModelSerializer):
-    products = ListInventoryProductSerializer(many=True, read_only=True)
+    products = InventoryProductSerializer(many=True, read_only=False)
 
     class Meta:
         model = models.Inventory
-        fields = ('date', )
+        fields = ('date', 'products')
 
 
-class InventoryProductSerializer(serializers.ModelSerializer):
-    inventory = serializers.PrimaryKeyRelatedField()
-    product = serializers.PrimaryKeyRelatedField()
+class ChequeSerializer(serializers.ModelSerializer):
+    products = serializers.StringRelatedField(read_only=False, many=True)
 
     class Meta:
-        model = models.InventoryProduct
+        model = models.Cheque
+        fields = ('seller', 'dt', 'products')
+
+
+class CreateChequeSerializer(serializers.ModelSerializer):
+    products = serializers.PrimaryKeyRelatedField(read_only=False, many=True, queryset=models.ActualProduct.objects.all())
+
+    class Meta:
+        model = models.Cheque
+        fields = ('seller', 'dt', 'products',)
+
+
+class ActualProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.ActualProduct
         fields = '__all__'
 
 
-# class Cheque(serializers.ModelSerializer):
-#     products =
+class CreateCouponSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=models.ActualProduct)
+
+    class Meta:
+        model = models.Coupon
+        fields = '__all__'
+
+
+class CouponSerializer(serializers.ModelSerializer):
+    product = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.Coupon
+        fields = '__all__'
+
+
+class UploadFileSerializer(serializers.Serializer):
+
+    file = serializers.FileField()
+
+    def validate(self, attrs):
+        file = attrs.get('file', None)
+        filename, file_extension = os.path.splitext(file.name)
+
+        if file and file_extension == '.csv':
+            return file

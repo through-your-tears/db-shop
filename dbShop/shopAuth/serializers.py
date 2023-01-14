@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 
 from rest_framework import serializers
 
-from .models import CustomUser, Job, Profile
+from .models import *
 from .token_generators import generate_rt
 
 
@@ -104,3 +104,43 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Notification
+        fields = ('user', 'text', 'confirmed')
+
+
+class WorkingDaySerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = WorkingDay
+        fields = ('user', 'today', 'start_day', 'end_day')
+
+
+class DayOffSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = DayOff
+        fields = ('user', 'date')
+
+
+class VacationSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Vacation
+        fields = '__all__'
+
+    def validate(self, attrs):
+        delta = (attrs['end'] - attrs['start']).days
+        if delta > 28:
+            raise serializers.ValidationError("Отпуск не может быть больше 28 дней")
+        elif delta < 0:
+            raise serializers.ValidationError("Отпуск не может закончиться раньше начала")
+        return attrs

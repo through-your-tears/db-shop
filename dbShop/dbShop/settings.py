@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'jwt',
     'rest_framework',
+    'shop',
     'shopAuth',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -75,6 +76,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dbShop.wsgi.application'
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -142,7 +145,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'dbShop.exceptions.core_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'authorization.backends.JWTAuthentication',
+        'shopAuth.backends.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 25
