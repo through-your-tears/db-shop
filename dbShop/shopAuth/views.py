@@ -27,9 +27,9 @@ class RefreshView(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'access_token': openapi.Schema(type=openapi.TYPE_STRING, description='access_token for get refresh_token'),
+            'refresh_token': openapi.Schema(type=openapi.TYPE_STRING, description='refresh_token'),
         },
-        required=['access_token']
+        required=['refresh_token']
     ),
         responses={
             status.HTTP_200_OK: openapi.Schema(
@@ -49,13 +49,16 @@ class RefreshView(APIView):
             return Response({
                 'error': 'User does not exist'
             }, status=status.HTTP_418_IM_A_TEAPOT)
-        user.refresh_token = generate_rt()
-        user.save(update_fields=('refresh_token',))
-        data = {
-                'access_token': generate_jwt(user.pk),
-                'refresh_token': user.refresh_token
-        }
-        return Response(data, status=status.HTTP_200_OK)
+        if refresh_token == user.refresh_token:
+            user.refresh_token = generate_rt()
+            user.save(update_fields=('refresh_token',))
+            data = {
+                    'access_token': generate_jwt(user.pk),
+                    'refresh_token': user.refresh_token
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegistrationAPIView(APIView):
