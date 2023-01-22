@@ -17,13 +17,13 @@ class IsStorekeeper(BasePermission):
         # if request.method in SAFE_METHODS:
         #     return True
 
-        return request.user.role == Role.objects.get('storekeeper')
+        return request.user.role == Role.objects.get(name='storekeeper')
 
 
 class IsSeller(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.user.role == Role.objects.get('seller')
+        return request.user.role == Role.objects.get(name='seller')
 
 
 class IsMerchandiserOrAuthenticatedReadOnly(BasePermission):
@@ -32,22 +32,22 @@ class IsMerchandiserOrAuthenticatedReadOnly(BasePermission):
         if request.user.is_authenticated and request.method in SAFE_METHODS:
             return True
 
-        return request.user.role == Role.objects.get('merchandiser')
+        return request.user.role == Role.objects.get(name='merchandiser')
 
 
 class IsMerchandiser(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.user.role == Role.objects.get('merchandiser')
+        return request.user.role == Role.objects.get(name='merchandiser')
 
 
 class IsDirector(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.user.role == Role.objects.get('director')
+        return request.user.role == Role.objects.get(name='director')
 
 
 class IsGK(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.user.role == Role.objects.get('GK')
+        return request.user.role == Role.objects.get(name='GK')

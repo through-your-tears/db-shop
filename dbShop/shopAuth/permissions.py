@@ -15,4 +15,4 @@ class IsAuthorOrReadOnly(BasePermission):
 class IsDirector(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.user.role == Role.objects.get('director')
+        return request.user.role == Role.objects.get(name='director')
