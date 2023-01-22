@@ -87,6 +87,12 @@ class ActualProductPriceViewSet(ModelViewSet):
     serializer_class = serializers.ActualProductSerializer
     pagination_class = LimitOffsetPagination
 
+    def get_serializer_class(self):
+        if self.action == 'create' or self.action == 'update':
+            return serializers.CreateActualProductSerializer
+        else:
+            return self.serializer_class
+
 
 class CouponViewSet(ModelViewSet):
     queryset = models.Coupon

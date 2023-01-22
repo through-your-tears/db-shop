@@ -20,7 +20,7 @@ class VendorSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    vendor = serializers.PrimaryKeyRelatedField(read_only=True)
+    vendor = serializers.PrimaryKeyRelatedField(queryset=models.Vendor.objects.all())
 
     class Meta:
         model = models.Product
@@ -28,7 +28,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class VendorContactSerializer(serializers.ModelSerializer):
-    vendor = serializers.PrimaryKeyRelatedField(read_only=True)
+    vendor = serializers.PrimaryKeyRelatedField(queryset=models.Vendor.objects.all())
 
     class Meta:
         model = models.VendorContact
@@ -43,7 +43,7 @@ class RegionSerializer(serializers.ModelSerializer):
 
 
 class TruckSerializer(serializers.ModelSerializer):
-    region = serializers.PrimaryKeyRelatedField(read_only=True)
+    region = serializers.PrimaryKeyRelatedField(queryset=models.Region.objects.all())
     driver = serializers.StringRelatedField()
 
     class Meta:
@@ -84,7 +84,15 @@ class CreateChequeSerializer(serializers.ModelSerializer):
 
 
 class ActualProductSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(many=True, read_only=True)
+    product = ProductSerializer(many=True)
+
+    class Meta:
+        model = models.ActualProduct
+        fields = '__all__'
+
+
+class CreateActualProductSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=models.Product.objects.all())
 
     class Meta:
         model = models.ActualProduct
@@ -92,7 +100,7 @@ class ActualProductSerializer(serializers.ModelSerializer):
 
 
 class CreateCouponSerializer(serializers.ModelSerializer):
-    product = serializers.PrimaryKeyRelatedField(queryset=models.ActualProduct)
+    product = serializers.PrimaryKeyRelatedField(queryset=models.ActualProduct.objects.all())
 
     class Meta:
         model = models.Coupon
