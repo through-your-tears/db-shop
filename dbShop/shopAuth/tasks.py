@@ -58,3 +58,12 @@ def close_work_day():
             notify.save(update_fields=['confirmed'])
         day.end_day = day.user.job.start_work_day + timedelta(hours=day.user.job.day_work_hours)
         day.save(update_fields=['end_day'])
+
+
+@app.task
+def create_truancy_report():
+    text = 'Список не вышедших вчера на работу:\n'
+    for day in DayOff.objects.filter(
+            date=(date.today() - timedelta(days=1)),
+    ):
+        text += f'{str(Profile.objects.get(user=day.user))},\n'

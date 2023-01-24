@@ -64,6 +64,16 @@ services:
       - web
       - redis
       - celery
+  pgAdmin:
+    image: dpage/pgadmin4:6.4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@email.com
+      - PGADMIN_DEFAULT_PASSWORD=1
+    volumes:
+      - ./docker-data/pgAdmin:/var/lib/pgadmin
+    ports:
+      - 8080:8080
+
 
 volumes:
   postgres_data:

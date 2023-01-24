@@ -158,6 +158,12 @@ class ProfileViewSet(ModelViewSet):
     serializer_class = ProfileSerializer
     pagination_class = LimitOffsetPagination
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class NotificationViewSet(GenericViewSet):
     queryset = Notification.objects.all()
@@ -172,6 +178,12 @@ class WorkDayViewSet(ModelViewSet):
     serializer_class = WorkingDaySerializer
     pagination_class = LimitOffsetPagination
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class DayOffViewSet(ModelViewSet):
     queryset = DayOff.objects.all()
@@ -185,3 +197,9 @@ class VacationViewSet(ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
     serializer_class = VacationSerializer
     pagination_class = LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)

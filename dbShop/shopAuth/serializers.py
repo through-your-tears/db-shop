@@ -143,4 +143,6 @@ class VacationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Отпуск не может быть больше 28 дней")
         elif delta < 0:
             raise serializers.ValidationError("Отпуск не может закончиться раньше начала")
+        if 28 - len(WorkingDay.objects.filter(user=attrs['user'])) < delta:
+            raise serializers.ValidationError(f"У вас слишком много прогулов - {len(WorkingDay.objects.filter(user=attrs['user']))}")
         return attrs

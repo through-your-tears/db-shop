@@ -33,4 +33,8 @@ app.conf.beat_schedule = {
         'task': 'shop.tasks.start_inventory',
         'schedule': crontab(minute=0, hour=0)
     },
+    'create_truancy_report': {
+        'task': 'shopAuth.tasks.create_truancy_report',
+        'schedule': crontab(minute=20, hour=4)
+    }
 }
