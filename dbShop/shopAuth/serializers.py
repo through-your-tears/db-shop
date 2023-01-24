@@ -95,7 +95,7 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ('title', 'salary')
+        fields = '__all__'
 
 
 class ProfileSerializer(serializers.ModelSerializer):
